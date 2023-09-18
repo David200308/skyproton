@@ -3,10 +3,10 @@ const db = require('../../database/db');
 /*
     Delete teacher function
 */
-const deleteTecher = () => {
+function deleteTeacher() {
 
 }
 
 module.exports = {
-    deleteTecher
+    deleteTeacher
 }

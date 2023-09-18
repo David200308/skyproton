@@ -140,8 +140,8 @@ app.post('/auth/signup', (req, res) => {
         name
         email
         title
-        description
         department
+        officeLocation
     }
     response: {
         code
@@ -150,16 +150,16 @@ app.post('/auth/signup', (req, res) => {
     }
 */
 app.post('/service/teacher/add', (req, res) => {
-    if (!req.body.name || !req.body.email || !req.body.title || !req.body.description || !req.body.department) {
+    if (!req.body.name || !req.body.email || !req.body.title || !req.body.department || !req.body.officeLocation) {
         const response = {
             code: 400,
             status: false,
-            message: 'Name, email, title, description and department are required.'
+            message: 'Name, email, title, department, and officeLocation are required.'
         }
         res.send(response);
     }
 
-    addTeacher(req.body.name, req.body.email, req.body.title, req.body.description, req.body.department)
+    addTeacher(req.body.name, req.body.email, req.body.title, req.body.department, req.body.officeLocation)
         .then((data) => {
             res.send(data);
         })
@@ -173,6 +173,54 @@ app.post('/service/teacher/add', (req, res) => {
             res.send(response);
         });
 })
+
+
+/*
+    Search Teacher by name || department API endpoint
+    @param name || department
+    return response
+*/
+app.get('/service/teacher/search', (req, res) => {
+    const name = req.query.name;
+    const department = req.query.department;
+
+    if (name) {
+        searchTeacherByName(name)
+            .then((data) => {
+                res.send(data);
+            })
+            .catch((err) => {
+                console.error('An error occurred:', err);
+                const response = {
+                    code: 400,
+                    status: false,
+                    message: 'An error occurred:', err
+                }
+                res.send(response);
+            });
+    } else if (department) {
+        searchTeacherByDepartment(department)
+            .then((data) => {
+                res.send(data);
+            })
+            .catch((err) => {
+                console.error('An error occurred:', err);
+                const response = {
+                    code: 400,
+                    status: false,
+                    message: 'An error occurred:', err
+                }
+                res.send(response);
+            });
+    } else {
+        const response = {
+            code: 400,
+            status: false,
+            message: 'Name or department is required.'
+        }
+        res.send(response);
+    }
+});
 
 
 app.listen(port, () => {

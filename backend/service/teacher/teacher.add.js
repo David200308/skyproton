@@ -2,15 +2,15 @@ const db = require('../../database/db');
 
 /*
     Add teacher function
-    @param: name, email, title, description, department
+    @param: name, email, title, department, officeLocation
     @return: response
 */
-const addTecher = (name, email, title, description, department) => {
-    const addSQL = 'INSERT INTO TEACHER (NAME, EMAIL, TITLE, DESCRIPTION, DEPARTMENT, RECORDTIME) VALUES (?, ?, ?, ?, ?, NOW())';
+function addTeacher(name, email, title, department, officeLocation) {
+    const addSQL = 'INSERT INTO TEACHER (NAME, EMAIL, TITLE, DEPARTMENT, OFFICELOCATION, RECORDTIME) VALUES (?, ?, ?, ?, ?, NOW())';
     return new Promise((resolve, reject) => {
         db.connect(function (err) {
             if (err) throw err;
-            db.query(addSQL, [name, email, title, description, department], (err, result) => {
+            db.query(addSQL, [name, email, title, department, officeLocation], (err, result) => {
                 if (err) {
                     const response = {
                         code: 400,
@@ -32,5 +32,5 @@ const addTecher = (name, email, title, description, department) => {
 }
 
 module.exports = {
-    addTecher
+    addTeacher
 }

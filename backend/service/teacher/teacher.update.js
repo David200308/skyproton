@@ -3,10 +3,10 @@ const db = require('../../database/db');
 /*
     Update teacher function
 */
-const updateTecher = () => {
+function updateTeacher() {
     
 }
 
 module.exports = {
-    updateTecher
+    updateTeacher
 }

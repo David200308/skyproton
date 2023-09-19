@@ -5,7 +5,11 @@ const { login } = require('./auth/auth.login');
 const { signup } = require('./auth/auth.signup');
 
 const addTeacher = require('./service/teacher/teacher.add');
-const searchTeacher = require('./service/teacher/teacher.search');
+const { 
+    searchTeacherByName, 
+    searchTeacherByDepartment, 
+    searchTeacherByKeyword 
+} = require('./service/teacher/teacher.search');
 const updateTeacher = require('./service/teacher/teacher.update');
 const deleteTeacher = require('./service/teacher/teacher.delete');
 
@@ -176,13 +180,15 @@ app.post('/service/teacher/add', (req, res) => {
 
 
 /*
-    Search Teacher by name || department API endpoint
-    @param name || department
+    Search Teacher by name || department || keyword API endpoint
+    GET /service/teacher/search?name= || department= || keyword=
+    @param name || department || keyword
     return response
 */
 app.get('/service/teacher/search', (req, res) => {
     const name = req.query.name;
     const department = req.query.department;
+    const keyword = req.query.keyword;
 
     if (name) {
         searchTeacherByName(name)
@@ -213,12 +219,19 @@ app.get('/service/teacher/search', (req, res) => {
                 res.send(response);
             });
     } else {
-        const response = {
-            code: 400,
-            status: false,
-            message: 'Name or department is required.'
-        }
-        res.send(response);
+        searchTeacherByKeyword(keyword)
+            .then((data) => {
+                res.send(data);
+            })
+            .catch((err) => {
+                console.error('An error occurred:', err);
+                const response = {
+                    code: 400,
+                    status: false,
+                    message: 'An error occurred:', err
+                }
+                res.send(response);
+            });
     }
 });
 

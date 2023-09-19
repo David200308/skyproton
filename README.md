@@ -10,17 +10,19 @@ Source code of SkyProton Frontend &amp; Backend.
 
 ## Backend API
 
-- Auth Endpoint
+- Auth Endpoint ( /auth )
   - Login
     - POST /auth/login
   - Signup
     - POST /auth/signup
-- Service Endpoint
+- Service Endpoint ( /service)
   - Add Teacher
     - POST /service/teacher/add
   - Search Teacher
-    - GET /service/teacher/search?name="teacher_name"
+    - GET /service/teacher/search?name="..."
+    - GET /service/teacher/search?department="..."
+    - GET /service/teacher/search?keyword="..."
   - Delete Teacher
-    - DELETE /service/teacher/delete?id="teacher_id"
+    - DELETE /service/teacher/delete?id="..."
   - Update Teacher
     - POST /service/teacher/update

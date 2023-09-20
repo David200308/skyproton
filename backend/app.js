@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const { login } = require('./auth/auth.login');
 const { signup } = require('./auth/auth.signup');
+const { verifyToken } = require('./auth/auth.tokenverify');
 
 const addTeacher = require('./service/teacher/teacher.add');
 const { 
@@ -53,10 +54,16 @@ app.get('/service', (req, res) => {
 /*
     Login API endpoint
     POST /auth/login
+    
     body: {
         email
         password
     }
+    or
+    cookie: {
+        token
+    }
+
     response: {
         code
         status
@@ -75,6 +82,25 @@ app.post('/auth/login', (req, res) => {
                     code: data.code,
                     status: data.status,
                     message: data.message,
+                }
+                res.send(response);
+            })
+            .catch((err) => {
+                console.error('An error occurred:', err);
+                const response = {
+                    code: 400,
+                    status: false,
+                    message: 'An error occurred:', err
+                }
+                res.send(response);
+            });
+    } else if (req.cookies.token) {
+        verifyToken(req.cookies.token)
+            .then((data) => {
+                const response = {
+                    code: 200,
+                    status: true,
+                    message: 'Token is valid.',
                 }
                 res.send(response);
             })

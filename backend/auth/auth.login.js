@@ -1,6 +1,7 @@
 const db = require('../database/db');
 const jwt = require('jsonwebtoken');
 const sha256 = require('sha256');
+const cypto = require('crypto');
 require('dotenv').config();
 
 
@@ -25,7 +26,7 @@ function login(email, password) {
                 };
                 resolve(JSON.stringify(response));
             } else if (result.length != 0) {
-                const sessionKey = sha256(email + password + Date.now() + Math.random());
+                const sessionKey = sha256(email + password + Date.now() + cypto.randomBytes(64).toString("hex"));
                 updateSessionKey(sessionKey, email).then((data) => {
                     if (data) {
                         // jwt payload

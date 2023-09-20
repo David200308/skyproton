@@ -1,5 +1,5 @@
 {
-  "name": "auth-platform",
+  "name": "skyproton-backend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -9,11 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
-    "mysql": "^2.18.1",
-    "mysql2": "^3.6.0",
+    "mysql2": "^3.0.0",
     "sha256": "^0.2.0"
   }
 }

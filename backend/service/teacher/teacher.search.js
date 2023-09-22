@@ -2,15 +2,13 @@ const db = require('../../database/db');
 
 /*
     Search teacher by name function
-    @param name
-    return response
 */
 function searchTeacherByName(name) {
     return new Promise((resolve, reject) => {
         db.connect(function (err) {
             if (err) throw err;
-            const searchSQL = 'SELECT * FROM TEACHER WHERE NAME LIKE' + '"%' + name + '%"' + 'ORDER BY NAME ASC';
-            db.query(searchSQL, (err, result) => {
+            const searchSQL = 'SELECT * FROM TEACHER WHERE NAME LIKE ? ORDER BY NAME ASC';
+            db.query(searchSQL, '%' + name + '%', (err, result) => {
                 if (err) {
                     const response = {
                         code: 400,
@@ -35,15 +33,13 @@ function searchTeacherByName(name) {
 
 /*
     Search teachers by department function
-    @param department
-    return response
 */
 function searchTeacherByDepartment(department) {
     return new Promise((resolve, reject) => {
         db.connect(function (err) {
             if (err) throw err;
-            const searchSQL = 'SELECT * FROM TEACHER WHERE DEPARTMENT LIKE' + '"%' + department + '%"' + 'ORDER BY NAME ASC';
-            db.query(searchSQL, (err, result) => {
+            const searchSQL = 'SELECT * FROM TEACHER WHERE DEPARTMENT LIKE ? ORDER BY NAME ASC';
+            db.query(searchSQL, '%' + department + '%', (err, result) => {
                 if (err) {
                     const response = {
                         code: 400,
@@ -65,18 +61,13 @@ function searchTeacherByDepartment(department) {
     });
 }
 
-
-/*
-    Search teachers by keyword function
-    @param keyword
-    return response
-*/
+// search all the teachers database by search keyword
 function searchTeacherByKeyword(keyword) {
     return new Promise((resolve, reject) => {
         db.connect(function (err) {
             if (err) throw err;
-            const searchSQL = 'SELECT * FROM TEACHER WHERE NAME LIKE' + '"%' + keyword + '%"' + 'OR DEPARTMENT LIKE' + '"%' + keyword + '%"' + 'OR TITLE LIKE' + '"%' + keyword + '%"' + 'OR OFFICELOCATION LIKE' + '"%' + keyword + '%"' + 'OR EMAIL LIKE' + '"%' + keyword + '%"' + 'ORDER BY NAME ASC';
-            db.query(searchSQL, (err, result) => {
+            const searchSQL = 'SELECT * FROM TEACHER WHERE NAME LIKE ? OR DEPARTMENT LIKE ? OR TITLE LIKE ? OR OFFICELOCATION LIKE ? OR EMAIL LIKE ? ORDER BY NAME ASC';
+            db.query(searchSQL, ['%' + keyword + '%', '%' + keyword + '%', '%' + keyword + '%', '%' + keyword + '%', '%' + keyword + '%'], (err, result) => {
                 if (err) {
                     const response = {
                         code: 400,

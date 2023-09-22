@@ -26,3 +26,8 @@ Source code of SkyProton Frontend &amp; Backend.
     - DELETE /service/teacher/delete?id="..."
   - Update Teacher
     - POST /service/teacher/update
+
+## Contributors
+
+- Founder & Full Stack Developer - Guanlin JIANG (David)
+- Cybersecurity Penetration Tester - Wenchang CHAI

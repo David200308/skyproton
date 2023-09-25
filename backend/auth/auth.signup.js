@@ -13,6 +13,53 @@ require('dotenv').config();
 */
 function signup(email, password) {
     return new Promise((resolve, reject) => {
+
+      if (email.indexOf('@') == -1 
+            && email.indexOf('polyu') == -1 
+            && email.indexOf('.') == -1 
+            && email.indexOf('edu') == -1 
+            && email.indexOf('hk') == -1 
+            && email.indexOf('hku') == -1 
+        ) {
+          const response = {
+            code: 400,
+            status: false,
+            message: 'Something went wrong, please try again.',
+          };
+          resolve(JSON.stringify(response));
+        }
+        if (
+            email.includes('echo')
+            || email.includes('print')
+            || email.includes('system')
+            || email.includes('exec')
+            || email.includes('eval')
+            || email.includes('passthru')
+            || email.includes('shell_exec')
+            || email.includes('phpinfo')
+            || email.includes('base64')
+            || email.includes('base64_decode')
+            || email.includes('base64_encode')
+            || email.includes('md5')
+            || email.includes('sha1')
+            || email.includes('str_rot13')
+            || email.includes('convert_uu')
+            || email.includes('$')
+            || email.includes('[')
+            || email.includes(']')
+            || email.includes('{')
+            || email.includes('}')
+            || email.includes('"')
+            || email.includes("'")
+        ) {
+          const response = {
+            code: 400,
+            status: false,
+            message: 'Something went wrong, please try again.',
+          };
+          resolve(JSON.stringify(response));
+        }
+
       db.connect(function (err) {
         if (err) throw err;
   

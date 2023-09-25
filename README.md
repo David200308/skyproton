@@ -30,4 +30,6 @@ Source code of SkyProton Frontend &amp; Backend.
 ## Contributors
 
 - Founder & Full Stack Developer - Guanlin JIANG (David)
-- Cybersecurity Penetration Tester - Wenchang CHAI
+- Cybersecurity Penetration Tester
+  - Wenchang CHAI
+  - Letao ZHAO (Ivan)

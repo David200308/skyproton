@@ -14,17 +14,17 @@ require('dotenv').config();
 function signup(email, password) {
     return new Promise((resolve, reject) => {
 
-      const emailDomain = email.split('@')[1];
-      const emailName = email.split('@')[0];
-      if (emailDomain !== 'connect.polyu.hk' || emailDomain !== 'polyu.edu.hk') {
+      const emailDomains = ["connect.polyu.hk", "polyu.edu.hk"];
+      
+      if (!emailDomains.includes(email.split('@')[1])) {
           const response = {
             code: 400,
             status: false,
             message: 'Something went wrong, please try again.',
           };
           resolve(JSON.stringify(response));
-        }
-      if (emailName == "") {
+      }
+      if (email.split('@')[0] == "") {
         const response = {
           code: 400,
           status: false,

@@ -1,4 +1,10 @@
 const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const db = require('./database/db');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 const { login } = require('./auth/auth.login');
 const { signup } = require('./auth/auth.signup');
@@ -17,6 +23,89 @@ const app = express();
 const port = 5555;
 
 app.use(express.json());
+
+app.use(session({
+    secret: process.env.jwtSecret,
+    resave: true,
+    saveUninitialized: true
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:5555/auth/google/callback",
+  },
+  function(accessToken, refreshToken, profile, done) {
+    const userEmail = profile.emails[0].value;
+    
+    db.query('SELECT * FROM USER WHERE EMAIL = ?', [userEmail], (err, results) => {
+      if (err) return done(err);
+      if (results.length > 0) {
+        const user = results[0];
+        if (!user.CONNECTGOOGLE) {
+            db.query('UPDATE USER SET CONNECTGOOGLE = ?, WHERE EMAIL = ?', [true, userEmail], (err, result) => {
+                if (err) return done(err);
+                user.CONNECTGOOGLE = true;
+          });
+        } else {
+          return done(null, user);
+        }
+      } else {
+        
+        const newUser = {
+          EMAIL: userEmail,
+          CREATETIME: Math.floor(Date.now() / 1000),
+          CONNECTGOOGLE: true,
+        };
+
+        db.query('INSERT INTO USER SET ?', newUser, (err, result) => {
+          if (err) return done(err);
+          return done(null, newUser);
+        });
+      }
+    });
+  }
+));
+
+
+passport.serializeUser(function(user, done) {
+    done(null, user.EMAIL);
+});
+
+passport.deserializeUser(function(email, done) {
+    db.query('SELECT * FROM USER WHERE EMAIL = ?', [email], (err, results) => {
+        if (err) { 
+          done(err); 
+        } else {
+          done(null, results[0]);
+        }
+      });
+});
+
+// Google Authentication Routes
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
+    function(req, res) {
+        const email = req.user.EMAIL;
+        
+        const payload = {
+            exp: Math.floor(Date.now() / 1000) + 86400,
+            iss: email,
+            aud: 'google'
+        }
+        
+        const token = jwt.sign(payload, process.env.jwtSecret, { algorithm: 'HS256' }, {
+            expiresIn: 86400,
+        });
+
+        res.cookie('token', token, { maxAge: 86400 * 1000 });
+        res.redirect('/');
+    }
+);
 
 
 /*
@@ -75,7 +164,7 @@ app.post('/auth/login', (req, res) => {
         login(req.body.email, req.body.password)
             .then((data) => {
                 if (data.token) {
-                    res.cookie('token', data.token, { maxAge: 86400 });
+                    res.cookie('token', data.token, { maxAge: 86400 * 1000 });
                 }
                 const response = {
                     code: data.code,
@@ -96,12 +185,21 @@ app.post('/auth/login', (req, res) => {
     } else if (req.cookies.token) {
         verifyToken(req.cookies.token)
             .then((data) => {
-                const response = {
-                    code: 200,
-                    status: true,
-                    message: 'Token is valid.',
+                if (data === true) {
+                    const response = {
+                        code: 200,
+                        status: true,
+                        message: 'Token is valid.',
+                    }
+                    res.send(response);
+                } else {
+                    const response = {
+                        code: 400,
+                        status: false,
+                        message: 'Token is invalid.',
+                    }
+                    res.send(response);
                 }
-                res.send(response);
             })
             .catch((err) => {
                 console.error('An error occurred:', err);

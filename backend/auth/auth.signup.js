@@ -1,6 +1,6 @@
 const db = require('../database/db');
 const { isEmailExist } = require('./auth.accountexist');
-const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const sha256 = require('sha256');
 require('dotenv').config();
 
@@ -70,9 +70,12 @@ function signup(email, password) {
         isEmailExist(email)
           .then((emailExists) => {
             if (!emailExists) {
+              const salt = sha256(email + Date.now() + crypto.randomBytes(64).toString("hex"));
+              const passwordHash = sha256(password + salt);
+
               const AddSQL =
-                'INSERT INTO USER (EMAIL, PASSWORD, CREATETIME) VALUES (?, ?, NOW())';
-              db.query(AddSQL, [email, password], (err, result) => {
+                'INSERT INTO USER (EMAIL, PASSWORD, SALT, CREATETIME) VALUES (?, ?, ?, UNIX_TIMESTAMP())';
+              db.query(AddSQL, [email, passwordHash, salt], (err, result) => {
                 if (err) {
                   console.log(err);
                   const response = {

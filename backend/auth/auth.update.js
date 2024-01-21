@@ -10,8 +10,8 @@ function updateSessionKey(sessionKey, email) {
         db.connect(function (err) {
             if (err) throw err;
 
-            const LoginSQL = 'UPDATE USER SET SESSIONKEY = ? WHERE EMAIL = ?';
-            db.query(LoginSQL, [sessionKey, email], (err, result) => {            
+            const LoginSQL = 'UPDATE USER SET SESSIONKEY = ?, SESSIONKEYEXPIRETIME = (UNIX_TIMESTAMP() + 86400) WHERE EMAIL = ?';
+            db.query(LoginSQL, [sessionKey, email], (err, result) => {
                 if (err) {
                     resolve(false);
                 } else if (result.length != 0) {

@@ -15,7 +15,7 @@ function verifyToken(token) {
                 decoded = JSON.parse(decoded);
                 const email = decoded.email;
                 const sessionKey = decoded.sessionKey;
-                const LoginSQL = 'SELECT * FROM USER WHERE EMAIL = ? AND SESSIONKEY = ?';
+                const LoginSQL = 'SELECT * FROM USER WHERE EMAIL = ? AND SESSIONKEY = ? AND UNIX_TIMESTAMP() < SESSIONKEYEXPIRETIME';
                 db.query(LoginSQL, [email, sessionKey], (err, result) => {
                     if (err) {
                         resolve(false);

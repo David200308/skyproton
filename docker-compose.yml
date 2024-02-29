@@ -1,0 +1,21 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: . 
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./backend:/app/backend
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: SKYPROTON
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
